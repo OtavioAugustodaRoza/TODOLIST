@@ -10,6 +10,7 @@ const textoDoIntput = ref('')
 let maiorID = Math.max(...tarefas.value.map(item => item.id));
 const add = (() => {
   const tarefa = {id: maiorID+1, desc:textoDoIntput, status:'pendente'}
+  i
   tarefas.value.push(tarefa);
 })
 
@@ -21,7 +22,7 @@ const remove = ((id) => {
 } )
 
 const concluir = ((id) => {
-    const i = tarefas.value.findIndex(x => x.id == id)
+    const i = tarefas.value.findIndex(x => x.id === id)
     if(tarefas.value[i].status == 'pendente'){
       tarefas.value[i].status = "concluida"
     }else{
@@ -32,7 +33,7 @@ const concluir = ((id) => {
 </script>
 <template>
   <div class="cotainer">
-  <input type="text" v-model="textoDoIntput" @keyup.enter="add">
+  <input type="text" v-model="textoDoIntput" @keyup.enter="add"> <button @click="add">adiconar</button>
   <ul>
   <li v-for=" item in tarefas" :key="item.id">
   <div @click="concluir" >{{ item.desc }}</div>  <button @click="remove(item.id)">remover</button>
