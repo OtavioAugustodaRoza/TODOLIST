@@ -8,14 +8,21 @@ let tarefas = ref([
 ])
 const textoDoIntput = ref('')
 
+const gerarID = (()=> {
+  const id = Math.max(...tarefas.value.map((item) => item.id),0) + 1;
+  return id;
+})
+
 const add = () => {
-  let maiorID = Math.max(...tarefas.value.map((item) => item.id),0)
-  const tarefa = { id: maiorID + 1, desc: textoDoIntput.value, status: 'pendente' }
-  if (textoDoIntput.value == '') {
+  const tarefa = { id: gerarID(), desc: textoDoIntput.value, status: 'pendente' }
+  console.log(tarefa.id) //pra testar a func
+
+  if (textoDoIntput.value === '') {
     alert('Escreva algo')
-  } else {
-    tarefas.value.push(tarefa)
+    return;
   }
+
+  tarefas.value.push(tarefa)
   textoDoIntput.value= '';
 }
 
@@ -29,11 +36,9 @@ const remove = (id) => {
 const concluir = (id) => {
   const i = tarefas.value.findIndex((x) => x.id === id)
   if(i === -1) return;
-  if (tarefas.value[i].status == 'pendente') {
-    tarefas.value[i].status = 'concluida'
-  } else {
-    tarefas.value[i].status = 'pendente'
-  }
+  tarefas.value[i].status = tarefas.value[i].status === 'pendente'
+  ?  'concluida'
+  : 'pendente' ;
   console.log(tarefas.value[i].status) //so pra testar por enquanto
 }
 </script>
