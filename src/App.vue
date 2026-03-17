@@ -50,7 +50,7 @@ const concluir = (id) => {
 </script>
 <template>
   <div class="container">
-    <input type="text" v-model="textoDoIntput" @keyup.enter="add" />
+    <input type="text" placeholder="digite sua tarefa" v-model="textoDoIntput" @keyup.enter="add" />
     <button @click="add">Adicionar</button>
     <ul>
       <li v-for="item in tarefasFiltradas" :key="item.id">
