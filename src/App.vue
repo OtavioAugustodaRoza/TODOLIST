@@ -38,6 +38,19 @@ const remove = (id) => {
     tarefas.value.splice(i, 1)
   }
 }
+const contagemProgresso = computed(() => {
+  let concluidas = 0;
+  let pendentes = 0;
+  tarefas.value.map((item) => {
+    if(item.status === 'pendente'){
+      pendentes++;
+    }else{
+      concluidas++;
+    }})
+    return `concluidas: ${concluidas} / pendentes: ${pendentes}`
+})
+
+
 
 const concluir = (id) => {
   const i = tarefas.value.findIndex((x) => x.id === id)
@@ -50,19 +63,28 @@ const concluir = (id) => {
 </script>
 <template>
   <div class="container">
+    <h1>{{ contagemProgresso }}</h1>
     <input type="text" placeholder="digite sua tarefa" v-model="textoDoIntput" @keyup.enter="add" />
     <button @click="add">Adicionar</button>
     <ul>
       <li v-for="item in tarefasFiltradas" :key="item.id">
-        <div class="tarefa" :class="item.status === 'concluida' ? 'concluido' : '' " @click="concluir(item.id)">{{ item.desc }}</div>
+        <div
+          class="tarefa"
+          :class="item.status === 'concluida' ? 'concluido' : ''"
+          @click="concluir(item.id)"
+        >
+          {{ item.desc }}
+        </div>
         <button @click="remove(item.id)">remover</button>
       </li>
     </ul>
-    <input type="text"  placeholder="filtrar tarefa" v-model="filtro">
+
+    <input type="text" placeholder="filtrar tarefa" v-model="filtro" />
+    <button @click="ordenar">ordenar</button>
   </div>
 </template>
 <style scoped>
-.container{
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -70,8 +92,8 @@ const concluir = (id) => {
   gap: 20px;
   font-family: Arial, Helvetica, sans-serif;
 }
-ul{
-  display: flex ;
+ul {
+  display: flex;
   flex-direction: column;
   gap: 20px;
   list-style: none;
@@ -79,7 +101,7 @@ ul{
   margin-top: 30px;
   width: 300px;
 }
-li{
+li {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -87,14 +109,14 @@ li{
   padding: 12px;
   border-radius: 8px;
 }
-.tarefa{
+.tarefa {
   cursor: pointer;
 }
-.concluido{
+.concluido {
   text-decoration: line-through;
   color: gray;
 }
-button{
+button {
   padding: 10px 16px;
   border: none;
   border-radius: 8px;
@@ -103,7 +125,7 @@ button{
   cursor: pointer;
   transition: 0.3s;
 }
-input{
+input {
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -111,10 +133,10 @@ input{
   margin-right: 10px;
   outline: none;
 }
-input:focus{
+input:focus {
   outline: #369870 solid;
 }
-button:hover{
+button:hover {
   background-color: #369870;
 }
 </style>
