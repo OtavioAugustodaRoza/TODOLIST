@@ -17,7 +17,7 @@ const add = () => {
   const tarefa = { id: gerarID(), desc: textoDoIntput.value, status: 'pendente' }
   console.log(tarefa.id) //pra testar a func
 
-  if (textoDoIntput.value === '') {
+  if (textoDoIntput.value.trim() === '') {
     alert('Escreva algo')
     return;
   }
