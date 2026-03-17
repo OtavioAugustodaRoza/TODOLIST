@@ -1,11 +1,17 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 let tarefas = ref([
   { id: 1, desc: 'fazer o breakdance', status: 'pendente' },
   { id: 2, desc: 'ler livros', status: 'pendente' },
   { id: 3, desc: 'estudar o neymar', status: 'concluida' },
 ])
+const filtro = ref('')
+
+const tarefasFiltradas = computed(() => {
+  if(filtro.value.trim().length < 0) return tarefas.value;
+  return tarefas.value.filter((item) => item.desc.includes(filtro.value));
+})
 const textoDoIntput = ref('')
 
 const gerarID = (()=> {
@@ -47,11 +53,12 @@ const concluir = (id) => {
     <input type="text" v-model="textoDoIntput" @keyup.enter="add" />
     <button @click="add">Adicionar</button>
     <ul>
-      <li v-for="item in tarefas" :key="item.id">
+      <li v-for="item in tarefasFiltradas" :key="item.id">
         <div class="tarefa" :class="item.status === 'concluida' ? 'concluido' : '' " @click="concluir(item.id)">{{ item.desc }}</div>
         <button @click="remove(item.id)">remover</button>
       </li>
     </ul>
+    <input type="text"  placeholder="filtrar tarefa" v-model="filtro">
   </div>
 </template>
 <style scoped>
