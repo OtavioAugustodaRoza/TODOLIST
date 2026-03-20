@@ -1,11 +1,20 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
-let tarefas = ref([
+
+
+const tarefas = ref(JSON.parse(localStorage.getItem('tarefas')) || null || [
   { id: 1, desc: 'fazer o breakdance', status: 'pendente' },
   { id: 2, desc: 'ler livros', status: 'pendente' },
   { id: 3, desc: 'estudar o neymar', status: 'concluida' },
 ])
+
+watch(tarefas, (novoArray) => {
+  localStorage.setItem('tarefas', JSON.stringify(novoArray))
+}, {deep: true})
+
+
+
 const filtro = ref('')
 
 const tarefasFiltradas = computed(() => {
@@ -65,15 +74,8 @@ const remove = (id) => {
   }
 }
 const contagemProgresso = computed(() => {
-  let concluidas = 0
-  let pendentes = 0
-  tarefas.value.map((item) => {
-    if (item.status === 'pendente') {
-      pendentes++
-    } else {
-      concluidas++
-    }
-  })
+  const concluidas = tarefas.value.filter((t) => t.status === 'concluida').length
+  const pendentes = tarefas.value.length - concluidas
   return `Concluidas: ${concluidas}  Pendentes: ${pendentes}`
 })
 
@@ -96,7 +98,7 @@ const concluir = (id) => {
 </script>
 <template>
   <div class="container">
-    <h1>{{ contagemProgresso }}</h1>
+    <h1>{{ contagemProgresso}}</h1>
     <input type="text" placeholder="digite sua tarefa" v-model="textoDoInput" @keyup.enter="add" />
     <button @click="add">  {{ editandoS !== null ? 'Salvar' : 'Adicionar' }}</button>
     <button v-if="editandoS !== null" @click="editandoS = null; textoDoInput = ''">Cancelar</button>
@@ -132,7 +134,7 @@ const concluir = (id) => {
   font-family: Arial, Helvetica, sans-serif;
 }
 h1 {
-  color: #f4f4f4;
+  color: #42b883;
 }
 ul {
   display: flex;
