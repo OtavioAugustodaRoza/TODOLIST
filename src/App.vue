@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { Plus, Search, AlignLeft, Pencil, Trash2, Check, ClipboardList } from 'lucide-vue-next'
+import { Plus, Search, AlignLeft, ClipboardList } from 'lucide-vue-next'
+import cardExibicao from './components/CardExibicao.vue'
 
 const tarefas = ref(
   JSON.parse(localStorage.getItem('tarefas')) || [
@@ -140,27 +141,8 @@ const concluir = (id) => {
     </div>
 
     <ul class="lista">
-      <li
-        v-for="item in tarefasFiltradas"
-        :key="item.id"
-        class="tarefa"
-        :class="{ concluida: item.status === 'concluida' }"
-      >
-        <button class="btn-check" @click="concluir(item.id)">
-          <Check v-if="item.status === 'concluida'" :size="14" stroke-width="3" />
-        </button>
+    <CardExibicao />
 
-        <span class="descricao" @click="concluir(item.id)">{{ item.desc }}</span>
-
-        <div class="acoes">
-          <button class="btn-icone editar" @click="editar(item.id)" :disabled="editandoS !== null">
-            <Pencil :size="15" />
-          </button>
-          <button class="btn-icone remover" @click="remove(item.id)" :disabled="editandoS !== null">
-            <Trash2 :size="15" />
-          </button>
-        </div>
-      </li>
 
       <li v-if="tarefasFiltradas.length === 0" class="vazio">
         <ClipboardList :size="40" stroke-width="1.5" />
@@ -328,95 +310,6 @@ input:focus {
   gap: 6px;
   margin-top: 20px;
 }
-
-.tarefa {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1.5px solid #f0f0ec;
-  background: #fafaf8;
-  transition:
-    border-color 0.2s,
-    background 0.2s;
-}
-
-.tarefa:hover {
-  border-color: #e0e0da;
-  background: #fff;
-}
-
-.btn-check {
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
-  border: 2px solid #d4d4ce;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  color: transparent;
-  transition: all 0.2s;
-}
-
-.tarefa.concluida .btn-check {
-  background: #22c55e;
-  border-color: #22c55e;
-  color: #fff;
-}
-
-.btn-check:hover {
-  border-color: #22c55e;
-}
-
-.descricao {
-  flex: 1;
-  font-size: 14px;
-  color: #1a1a18;
-  cursor: pointer;
-  line-height: 1.4;
-  transition: color 0.2s;
-}
-
-.tarefa.concluida .descricao {
-  text-decoration: line-through;
-  color: #b0b0aa;
-}
-
-.acoes {
-  display: flex;
-  gap: 4px;
-}
-
-.btn-icone {
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #6b6b65;
-  transition: all 0.18s;
-}
-
-.btn-icone:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-.btn-icone.editar:hover:not(:disabled) {
-  background: #f0f9ff;
-  color: #0ea5e9;
-}
-.btn-icone.remover:hover:not(:disabled) {
-  background: #fff1f2;
-  color: #ef4444;
-}
-
 .vazio {
   display: flex;
   flex-direction: column;
