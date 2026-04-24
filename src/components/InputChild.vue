@@ -4,7 +4,7 @@ import { Plus, Search } from 'lucide-vue-next'
 defineProps({
   modelValue: String,
   placeholder: { type: String, default: 'Digite algo...' },
-  icone: { type: String, default: 'plus',   enum: ['plus',"search"] } // 'plus' ou 'search'
+  icone: { type: String, default: 'plus',   enum: ['plus',"search"] }
 })
 
 

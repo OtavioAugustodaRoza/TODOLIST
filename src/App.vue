@@ -1,10 +1,12 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-import {AlignLeft, ClipboardList } from 'lucide-vue-next'
+import {ClipboardList } from 'lucide-vue-next'
 import CardExibicao from './components/CardExibicao.vue'
 import InputChild from './components/InputChild.vue'
 import { UseI } from './hooks/UseI'
-import { UseIdG } from './hooks/UseIdG'
+import { UseAdd } from './hooks/UseAdd'
+import ButtonChild from './components/ButtonChild.vue'
+import { UseEditar } from './hooks/UseEditar'
 
 const tarefas = ref(
   JSON.parse(localStorage.getItem('tarefas')) || [
@@ -34,40 +36,8 @@ const tarefasFiltradas = computed(() => {
 const textoDoInput = ref('')
 
 const editandoS = ref(null)
-const editar = (id) => {
-  const i = UseI(tarefas,id)
-  if (i === -1 || tarefas.value[i].desc === '') return
-
-  textoDoInput.value = tarefas.value[i].desc
-  editandoS.value = id
-}
-const add = () => {
-  if (textoDoInput.value.trim() === '') {
-    alert('Escreva algo')
-    return
-  } else if (textoDoInput.value.length >= 25) {
-    alert('você ultrapassou o limite de caracteres')
-    return
-  }
-
-  if (editandoS.value !== null) {
-    const i = UseI(tarefas,editandoS.value)
-
-    if (i !== -1) {
-      tarefas.value[i].desc = textoDoInput.value
-    }
-
-    editandoS.value = null
-  } else {
-    const tarefa = {
-      id: UseIdG(tarefas),
-      desc: textoDoInput.value,
-      status: 'pendente',
-    }
-    tarefas.value.push(tarefa)
-  }
-  textoDoInput.value = ''
-}
+const editar = (id) => UseEditar(tarefas,textoDoInput,editandoS,id)
+const add = () => UseAdd(textoDoInput, editandoS, tarefas)
 
 const remove = (id) => {
   const i = UseI(tarefas,id)
@@ -95,12 +65,12 @@ const concluir = (id) => {
   const i = UseI(tarefas,id)
   if (i === -1) return
   tarefas.value[i].status = tarefas.value[i].status === 'pendente' ? 'concluida' : 'pendente'
-  console.log(tarefas.value[i].status) //so pra testar por enquanto
 }
 </script>
 
 <template>
   <div class="cartao">
+
     <div class="cabecalho">
       <div class="cabecalho-topo">
         <span class="etiqueta">Tarefas</span>
@@ -108,25 +78,26 @@ const concluir = (id) => {
       </div>
       <h1 class="titulo">Minha Lista</h1>
     </div>
+
     <div class="linha-input">
       <InputChild v-model="textoDoInput" placeholder="Nova tarefa..." icone="plus" @enter="add" />
-      <button class="btn-principal" @click="add">
+      <ButtonChild estilo="btn-principal" @add="add" >
         {{ editandoS !== null ? 'Salvar' : 'Adicionar' }}
-      </button>
-      <button
+      </ButtonChild>
+      <ButtonChild
         v-if="editandoS !== null"
-        class="btn-cancelar"
-        @click="((editandoS = null), (textoDoInput = ''))"
+        estilo="btn-cancelar"
+        @cancelar="((editandoS = null), (textoDoInput = ''))"
       >
         Cancelar
-      </button>
+      </ButtonChild>
     </div>
 
     <div class="linha-filtro">
       <InputChild v-model="filtro" placeholder="Filtrar tarefas..." icone="search" />
-      <button class="btn-ordenar" @click="ordenar" :disabled="tarefas.length <= 1">
-        <AlignLeft :size="16" /> Ordenar
-      </button>
+      <ButtonChild estilo="btn-ordenar" @ordenar="ordenar" icon="AlignLeft" :disabled="tarefas.length <= 1">
+      ordenar
+      </ButtonChild>
     </div>
 
     <ul class="lista">
@@ -199,70 +170,6 @@ const concluir = (id) => {
   align-items: center;
   margin-bottom: 12px;
 }
-
-.btn-principal {
-  padding: 11px 20px;
-  background: #1a1a18;
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  font-family: sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  transition:
-    background 0.2s,
-    transform 0.1s;
-}
-
-.btn-principal:hover {
-  background: #2d2d2a;
-}
-.btn-principal:active {
-  transform: scale(0.97);
-}
-
-.btn-cancelar {
-  padding: 11px 16px;
-  color: #a0a09a;
-  border: 1.5px solid #e8e8e4;
-  border-radius: 12px;
-  font-family: sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-cancelar:hover {
-  border-color: #f87171;
-  color: #ef4444;
-}
-
-.btn-ordenar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 11px 16px;
-  color: #6b6b65;
-  border: 1.5px solid #e8e8e4;
-  border-radius: 12px;
-  font-family: sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-ordenar:hover:not(:disabled) {
-  border-color: #1a1a18;
-  color: #1a1a18;
-}
-.btn-ordenar:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
 .lista {
   display: flex;
   flex-direction: column;

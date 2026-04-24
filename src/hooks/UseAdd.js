@@ -1,7 +1,6 @@
 import { UseI } from "./UseI"
 import { UseIdG } from "./UseIdG"
-import { computed } from "vue"
-export const UseAdd = computed(textoDoInput,editandoS,obj) => {
+export const UseAdd = (textoDoInput,editandoS,obj) => {
   if (textoDoInput.value.trim() === '') {
     alert('Escreva algo')
     return
@@ -27,4 +26,5 @@ export const UseAdd = computed(textoDoInput,editandoS,obj) => {
     obj.value.push(tarefa)
   }
   textoDoInput.value = ''
+
 }
