@@ -1,12 +1,20 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import {ClipboardList } from 'lucide-vue-next'
+
+//components
 import CardExibicao from './components/CardExibicao.vue'
 import InputChild from './components/InputChild.vue'
-import { UseI } from './hooks/UseI'
-import { UseAdd } from './hooks/UseAdd'
 import ButtonChild from './components/ButtonChild.vue'
+
+//hooks
+import { UseAdd } from './hooks/UseAdd'
 import { UseEditar } from './hooks/UseEditar'
+import { UseConcluir } from './hooks/UseConcluir'
+import { UseRemove } from './hooks/UseRemove'
+import { UseOrdenar } from './hooks/UseOrdenar'
+import { UseContagem } from './hooks/UseContagem'
+import { UseTarefasFil } from './hooks/UseTarefasFil'
 
 const tarefas = ref(
   JSON.parse(localStorage.getItem('tarefas')) || [
@@ -25,47 +33,17 @@ watch(
 )
 
 const filtro = ref('')
-
-const tarefasFiltradas = computed(() => {
-  if (filtro.value.trim().length === 0) return tarefas.value
-
-  return tarefas.value.filter((item) =>
-    item.desc.toLowerCase().includes(filtro.value.toLowerCase()),
-  )
-})
 const textoDoInput = ref('')
-
 const editandoS = ref(null)
+const ordenarStatus = ref(false)
+
+const tarefasFiltradas = computed(() => {return UseTarefasFil(tarefas,filtro)})
 const editar = (id) => UseEditar(tarefas,textoDoInput,editandoS,id)
 const add = () => UseAdd(textoDoInput, editandoS, tarefas)
-
-const remove = (id) => {
-  const i = UseI(tarefas,id)
-  if (i >= 0) {
-    tarefas.value.splice(i, 1)
-  }
-}
-const contagemProgresso = computed(() => {
-  const concluidas = tarefas.value.filter((t) => t.status === 'concluida').length
-  const pendentes = tarefas.value.length - concluidas
-  return `Concluidas: ${concluidas}  Pendentes: ${pendentes}`
-})
-
-const ordenarStatus = ref(false)
-const ordenar = () => {
-  ordenarStatus.value = !ordenarStatus.value
-  if (ordenarStatus.value) {
-    tarefas.value.sort((a, b) => a.desc.localeCompare(b.desc))
-  } else {
-    tarefas.value.sort((a, b) => a.id - b.id)
-  }
-}
-
-const concluir = (id) => {
-  const i = UseI(tarefas,id)
-  if (i === -1) return
-  tarefas.value[i].status = tarefas.value[i].status === 'pendente' ? 'concluida' : 'pendente'
-}
+const remove = (id) => UseRemove(tarefas,id)
+const contagemProgresso = computed(() => {return UseContagem(tarefas)})
+const ordenar = () => UseOrdenar(tarefas,ordenarStatus)
+const concluir = (id) => UseConcluir(tarefas,id)
 </script>
 
 <template>
