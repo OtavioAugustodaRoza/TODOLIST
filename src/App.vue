@@ -1,7 +1,8 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { Plus, Search, AlignLeft, ClipboardList } from 'lucide-vue-next'
-import cardExibicao from './components/CardExibicao.vue'
+import {AlignLeft, ClipboardList } from 'lucide-vue-next'
+import CardExibicao from './components/CardExibicao.vue'
+import InputChild from './components/InputChild.vue'
 
 const tarefas = ref(
   JSON.parse(localStorage.getItem('tarefas')) || [
@@ -50,8 +51,8 @@ const add = () => {
   if (textoDoInput.value.trim() === '') {
     alert('Escreva algo')
     return
-  }else if(textoDoInput.value.length >= 25){
-    alert("você ultrapassou o limite de caracteres")
+  } else if (textoDoInput.value.length >= 25) {
+    alert('você ultrapassou o limite de caracteres')
     return
   }
 
@@ -114,10 +115,7 @@ const concluir = (id) => {
       <h1 class="titulo">Minha Lista</h1>
     </div>
     <div class="linha-input">
-      <div class="campo">
-        <Plus class="icone-campo" :size="16" />
-        <input type="text" placeholder="Nova tarefa..." v-model="textoDoInput" @keyup.enter="add" />
-      </div>
+      <InputChild v-model="textoDoInput" placeholder="Nova tarefa..." icone="plus" @enter="add" />
       <button class="btn-principal" @click="add">
         {{ editandoS !== null ? 'Salvar' : 'Adicionar' }}
       </button>
@@ -131,24 +129,27 @@ const concluir = (id) => {
     </div>
 
     <div class="linha-filtro">
-      <div class="campo">
-        <Search class="icone-campo" :size="16" />
-        <input type="text" placeholder="Filtrar tarefas..." v-model="filtro" />
-      </div>
+      <InputChild v-model="filtro" placeholder="Filtrar tarefas..." icone="search" />
       <button class="btn-ordenar" @click="ordenar" :disabled="tarefas.length <= 1">
         <AlignLeft :size="16" /> Ordenar
       </button>
     </div>
 
     <ul class="lista">
-    <CardExibicao />
-
+      <CardExibicao
+        @concluir="concluir"
+        @remover="remove"
+        @editar="editar"
+        :item="item"
+        v-for="item in tarefasFiltradas"
+        :key="item.id"
+        :editandoS="editandoS"
+      />
 
       <li v-if="tarefasFiltradas.length === 0" class="vazio">
         <ClipboardList :size="40" stroke-width="1.5" />
         <p>Nenhuma tarefa encontrada</p>
       </li>
-
     </ul>
   </div>
 </template>
@@ -203,42 +204,6 @@ const concluir = (id) => {
   gap: 8px;
   align-items: center;
   margin-bottom: 12px;
-}
-
-.campo {
-  position: relative;
-  flex: 1;
-}
-
-.icone-campo {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #c0bfba;
-}
-
-input {
-  width: 100%;
-  padding: 11px 14px 11px 36px;
-  border: 1.5px solid #e8e8e4;
-  border-radius: 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: #1a1a18;
-  background: #fafaf8;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-input::placeholder {
-  color: #c0bfba;
-}
-
-input:focus {
-  border-color: #4ade80;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.12);
 }
 
 .btn-principal {
