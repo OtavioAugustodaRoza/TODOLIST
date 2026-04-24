@@ -3,6 +3,8 @@ import { computed, ref, watch } from 'vue'
 import {AlignLeft, ClipboardList } from 'lucide-vue-next'
 import CardExibicao from './components/CardExibicao.vue'
 import InputChild from './components/InputChild.vue'
+import { UseI } from './hooks/UseI'
+import { UseIdG } from './hooks/UseIdG'
 
 const tarefas = ref(
   JSON.parse(localStorage.getItem('tarefas')) || [
@@ -31,22 +33,14 @@ const tarefasFiltradas = computed(() => {
 })
 const textoDoInput = ref('')
 
-const gerarID = () => {
-  const id = Math.max(...tarefas.value.map((item) => item.id), 0) + 1
-  return id
-}
 const editandoS = ref(null)
 const editar = (id) => {
-  const i = acharI(id)
+  const i = UseI(tarefas,id)
   if (i === -1 || tarefas.value[i].desc === '') return
 
   textoDoInput.value = tarefas.value[i].desc
   editandoS.value = id
 }
-const acharI = (id) => {
-  return tarefas.value.findIndex((x) => x.id == id)
-}
-
 const add = () => {
   if (textoDoInput.value.trim() === '') {
     alert('Escreva algo')
@@ -57,7 +51,7 @@ const add = () => {
   }
 
   if (editandoS.value !== null) {
-    const i = acharI(editandoS.value)
+    const i = UseI(tarefas,editandoS.value)
 
     if (i !== -1) {
       tarefas.value[i].desc = textoDoInput.value
@@ -66,7 +60,7 @@ const add = () => {
     editandoS.value = null
   } else {
     const tarefa = {
-      id: gerarID(),
+      id: UseIdG(tarefas),
       desc: textoDoInput.value,
       status: 'pendente',
     }
@@ -76,7 +70,7 @@ const add = () => {
 }
 
 const remove = (id) => {
-  const i = acharI(id)
+  const i = UseI(tarefas,id)
   if (i >= 0) {
     tarefas.value.splice(i, 1)
   }
@@ -98,7 +92,7 @@ const ordenar = () => {
 }
 
 const concluir = (id) => {
-  const i = acharI(id)
+  const i = UseI(tarefas,id)
   if (i === -1) return
   tarefas.value[i].status = tarefas.value[i].status === 'pendente' ? 'concluida' : 'pendente'
   console.log(tarefas.value[i].status) //so pra testar por enquanto
